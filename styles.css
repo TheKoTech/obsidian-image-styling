@@ -1,8 +1,243 @@
-/*
+/* Prevents images on Canvas from stretchign way too much. The selector is so specific to not select anything it's not supposed to */
+.markdown-source-view img:not([width]) {
+	max-width: 100%;
+}
 
-This CSS file will be included with your plugin, and
-available in the app when your plugin is enabled.
+.obsidian-image-styling {
+	overflow: hidden;
+	display: block;
+	width: fit-content;
+	--ois-object-fit-default: cover;
+}
 
-If your plugin does not need CSS, delete this file.
+.obsidian-image-styling>img {
+	display: block;
+	object-fit: var(--ois-object-fit-default);
+}
 
-*/
+.obsidian-image-styling>img:not[width] {
+	max-width: 100%;
+	width: fit-content;
+}
+
+.obsidian-image-styling>img:not[height] {
+	max-height: 100%;
+	height: fit-content;
+}
+
+span.ois-w {
+	width: var(--ois-w-num);
+}
+
+.ois-w img {
+	width: 100%;
+}
+
+span.ois-w~.ois-label-text {
+	width: var(--ois-w-num);
+}
+
+span.ois-h {
+	height: var(--ois-h-num);
+}
+
+.ois-h img {
+	height: 100%;
+}
+
+.ois-round {
+	border-radius: var(--ois-round-num, 8px);
+}
+
+.ois-shadow {
+	box-shadow: var(--ois-shadow-arg, var(--ois-shadow-x, 0) var(--ois-shadow-y, 0) var(--ois-shadow-blur, 0) var(--ois-shadow-spread, 0) var(--ois-shadow-col, var(--ois-shadow-opacity, rgba(0, 0, 0, 0.2))));
+}
+
+.ois-shadow-s {
+	box-shadow: var(--shadow-s);
+}
+
+.ois-shadow-l {
+	box-shadow: var(--shadow-l);
+}
+
+.ois-card {
+	border-radius: var(--ois-card-num, var(--ois-rounded-num, 12px));
+	border-width: var(--ois-border-num, 1px);
+	border-style: var(--ois-card-arg, var(--ois-border-arg, solid));
+	border-color: var(--ois-card-col, var(--ois-border-col, var(--color-base-100)));
+}
+
+.ois-card:not(.ois-shadow, .ois-shadow-l, .ois-shadow-l) {
+	box-shadow: var(--shadow-s);
+}
+
+.ois-circle {
+	clip-path: circle(var(--ois-mask-circle-arg, closest-side));
+	aspect-ratio: 1;
+}
+
+.ois-circle>img {
+	height: 100%;
+}
+
+.ois-label-text {
+	display: block;
+	width: 100%;
+	max-width: 100%;
+	text-align: center;
+	font-size: var(--ois-label-text-num, .9em);
+}
+
+.ois-center {
+	margin-left: auto;
+	margin-right: auto;
+}
+
+.ois-right {
+	margin-left: auto;
+}
+
+/* Kidna the default, but why not */
+.ois-left {
+	margin-right: auto;
+}
+
+.ois-float-right {
+	float: right;
+}
+
+.ois-float-left {
+	float: left;
+}
+
+.ois-float {
+	float: left;
+}
+
+.ois-center~.ois-label-text {
+	margin-left: auto;
+	margin-right: auto;
+}
+
+.ois-border {
+	border-color: var(--ois-border-col, var(--ois-card-col, var(--color-base-100)));
+	border-style: var(--ois-border-arg, solid);
+	border-width: var(--ois-border-num, 1px);
+}
+
+.canvas-node-content span.ois-banner {
+	position: relative;
+	left: -24px;
+	top: -24px;
+	object-fit: cover;
+	width: calc(100% + 48px);
+	height: var(--ois-banner-num, var(--ois-h-num, auto));
+	display: block;
+	margin-bottom: -12px;
+}
+
+.workspace-leaf-content .markdown-reading-view .ois-banner-container {
+	height: calc(var(--ois-h-num, 250px) - 25px);
+}
+
+.workspace-leaf-content .markdown-reading-view .ois-banner-container span.ois-banner {
+	position: absolute;
+	inset: 0 0 auto 0;
+	height: var(--banner-num, 250px);
+}
+
+span.ois-banner img {
+	height: 100%;
+	width: 100%;
+	max-width: none;
+}
+
+/* todo */
+.ois-background {
+	position: absolute;
+	inset: 0;
+}
+
+.ois-icon {
+	display: inline-block;
+	width: var(--ois-icon-num, 1.5em);
+	height: var(--ois-icon-num, 1.5em);
+	max-height: fit-content;
+	max-width: fit-content;
+}
+
+.ois-icon[width]:not([height]) {
+	height: auto;
+}
+
+.ois-icon+.ois-label-text {
+	display: inline;
+	font-size: 1em;
+}
+
+.ois-icon+.ois-label-text::before {
+	content: ' ';
+}
+
+.ois-sticker {
+	overflow: visible;
+	height: var(--ois-sticker-num, 5em);
+	width: var(--ois-sticker-num, 5em);
+	--ois-sticker-border: calc(var(--ois-sticker-num, 5em) / 30);
+	padding: var(--ois-sticker-border);
+	filter:
+		drop-shadow(var(--ois-sticker-border) 0 .25px white)
+		/*  */
+		drop-shadow(calc(var(--ois-sticker-border) * -1) 0 .25px white)
+		/*  */
+		drop-shadow(0 var(--ois-sticker-border) .25px white)
+		/*  */
+		drop-shadow(0 calc(var(--ois-sticker-border) * -1) .25px white)
+		/*  */
+		drop-shadow(0px 1.5px var(--ois-sticker-border) rgba(0, 0, 0, 0.25));
+}
+
+.ois-sticker img {
+	height: 100%;
+	width: 100%;
+	object-fit: contain;
+}
+
+/* Default value is set differently for image shifting styles */
+/* Values here are overridden with the injected properties if specified */
+.ois-up {
+	--ois-up-num: 100%;
+}
+
+.ois-down {
+	--ois-down-num: 100%;
+}
+
+.ois-left {
+	--ois-left-num: 100%;
+}
+
+.ois-right {
+	--ois-right-num: 100%;
+}
+
+:is(.ois-up, .ois-down, .ois-left, .ois-right) img {
+	object-position: calc(50% - var(--ois-left-num, 0%) / 2 + var(--ois-right-num, 0%) / 2) calc(50% - var(--ois-up-num, 0%) / 2 + var(--ois-down-num, 0%) / 2);
+	outline: red 3px solid;
+}
+
+.ois-scale img {
+	transform: scale(var(--ois-scale-num, 1));
+}
+
+:is(.ois-up, .ois-down, .ois-left, .ois-right).ois-scale img {
+	/* This is the transalte amount needed to shift an image to its border */
+	--ois-scale-shift: calc((1 - 1 / var(--ois-scale-num)) / 2);
+	transform:
+		scale(var(--ois-scale-num, 1))
+		/* To calculate the actual shift amount, multiply the shift value by the up/down values */
+		translateY(calc(var(--ois-scale-shift) * var(--ois-up-num, 0%) - var(--ois-scale-shift) * var(--ois-down-num, 0%)))
+		/* Same for left-right */
+		translateX(calc(var(--ois-scale-shift) * var(--ois-left-num, 0%) - var(--ois-scale-shift) * var(--ois-right-num, 0%)));
+}
