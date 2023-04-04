@@ -38,18 +38,21 @@ export class StyleREs {
 /*
 regex101.com
 
-c    c-n    c-n-n-n-n-n-n-n    style-name-is-lonk
+class    class-name    c-n-n-n-n-n-n-n    style-name-is-lonk
 
-c-1    c-1px    c-x1px c-n-x1px-1x-y12pxpx
+c-1    c-1px    c-x1px c-n-x1px-1x-y12pxpx-y12pxpx-y12pxpx
 
-c-{}    c-n:{}    c-n:{abc123\|/<>,.?!@#$%^&*()_+}    
+c-""    c-n:"This is a picture\" right?"    c-n:"abc123\|/<>,.?!@#\" \" $%^&*()_+"-1px
 
 c-#000    c-#000000    c-#112233aa    c-n#000    c-n#000000    c-n#112233aa
 
-c-#(1, 2, 3)    c-#(1, 2, 3, .5)    c-n#(1, 2, 3, 0.1)    c-n#(1, 2, 3, 0.1)
+c-#()    c-#(1, 2, 3)    c-#(1, 2, 3, .5)    c-n#(1, 2, 3, 0.1)    c-n#(1, 2, 3, 0.1)
 
-c-&&    c-&&
+c-&&    c-&arg&    c-named&arg&    c-n&--a-r-g&
+
+c-n-x1px-y.1em-"!@#$%^&*()_+||/.,?><\"q\""-n:"\""-n#123-n#(255 0 0 | .1)-n&arg&-&--var&
+
+/(?<=^|\s)(?<name>[a-z]+(?:-[a-z]+)*)(?<args>(?:-(?:[a-z]*[\d.]+[a-z]*)|-(?:(?:[a-z]:)?(?:"[^"\\]*(?:\\.[^"\\]*)*"))|-(?:[a-z]*#(?:[a-fA-F\d]*?|\([\d\s.,|]*?\)))|-(?:[a-z]*&[a-z-:\s\(\)]*?&))*?)(?=\s|$)/
 
 */
 
-/(?<=^|\s)([a-z]+(?:-[a-z]+)*)((?:(?:-[a-z]*[\d.]+[a-z%]*)|(?:-(?:[a-z]+:)?\{.*?\})|(?:-[a-z]*#(?:[\da-fA-F]{3}|[\da-fA-F]{6}|[\da-fA-F]{8}))|(?:-&.*?&))*)(?![\w\-`{}:#&])/
