@@ -1,93 +1,118 @@
-/* Prevents images on Canvas from stretchign way too much. The selector is so specific to not select anything it's not supposed to */
+/* Prevents images on Canvas from overflowing. The selector is so specific is it doesn't select anything it's not supposed to */
 .markdown-source-view img:not([width]) {
 	max-width: 100%;
 }
 
-.obsidian-image-styling {
+.ois {
 	overflow: hidden;
 	display: block;
 	width: fit-content;
-	--ois-object-fit-default: cover;
 }
 
-.obsidian-image-styling>img {
+.ois>img {
 	display: block;
-	object-fit: var(--ois-object-fit-default);
+	object-fit: var(--ois-default-object-fit, cover);
 }
 
-.obsidian-image-styling>img:not[width] {
+.ois>img:not[width] {
 	max-width: 100%;
 	width: fit-content;
 }
 
-.obsidian-image-styling>img:not[height] {
+.ois>img:not[height] {
 	max-height: 100%;
 	height: fit-content;
 }
 
-span.ois-w {
+
+
+.ois.ois-w {
 	width: var(--ois-w-num);
 }
 
-.ois-w img {
+.ois.ois-w img {
 	width: 100%;
 }
 
-span.ois-w~.ois-label-text {
+.ois.ois-w+.ois-label-text {
 	width: var(--ois-w-num);
+	max-width: var(--ois-w-num)s;
 }
 
-span.ois-h {
+.ois.ois-h {
 	height: var(--ois-h-num);
 }
 
-.ois-h img {
+.ois.ois-h img {
 	height: 100%;
 }
 
-.ois-round {
+.ois.ois-round {
 	border-radius: var(--ois-round-num, 8px);
 }
 
-.ois-shadow {
+.ois.ois-shadow {
 	box-shadow: var(--ois-shadow-arg, var(--ois-shadow-x, 0) var(--ois-shadow-y, 0) var(--ois-shadow-blur, 0) var(--ois-shadow-spread, 0) var(--ois-shadow-col, var(--ois-shadow-opacity, rgba(0, 0, 0, 0.2))));
 }
 
-.ois-shadow-s {
+.ois.ois-shadow-s {
 	box-shadow: var(--shadow-s);
 }
 
-.ois-shadow-l {
+.ois.ois-shadow-l {
 	box-shadow: var(--shadow-l);
 }
 
-.ois-card {
+.ois.ois-card {
 	border-radius: var(--ois-card-num, var(--ois-rounded-num, 12px));
 	border-width: var(--ois-border-num, 1px);
 	border-style: var(--ois-card-arg, var(--ois-border-arg, solid));
 	border-color: var(--ois-card-col, var(--ois-border-col, var(--color-base-100)));
 }
 
-.ois-card:not(.ois-shadow, .ois-shadow-l, .ois-shadow-l) {
+.ois.ois-card:not(.ois-shadow, .ois-shadow-l, .ois-shadow-l) {
 	box-shadow: var(--shadow-s);
 }
 
-.ois-circle {
-	clip-path: circle(var(--ois-mask-circle-arg, closest-side));
+.ois.ois-circle {
 	aspect-ratio: 1;
+	border-radius: 100%;
 }
 
-.ois-circle>img {
+.ois.ois-circle>img {
+	border-radius: 100%;
 	height: 100%;
+	width: 100%;
+}
+
+.ois-text-wrapper {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: 4px;
+	width: min-content;
+	max-width: 100%;
+}
+
+.ois-text-wrapper .ois:not(.ois-w) {
+	width: var(--ois-info-num, max-content);
+	max-width: 100%;
 }
 
 .ois-label-text {
-	display: block;
-	width: 100%;
-	max-width: 100%;
+	flex-basis: 100%;
 	text-align: center;
-	font-size: var(--ois-label-text-num, .9em);
+	font-size: var(--ois-label-num, .9em);
 }
+
+.ois.ois-italic+.ois-label-text {
+	font-style: italic;
+}
+
+.ois.ois-bold+.ois-label-text {
+	font-weight: bold;
+}
+
 
 .ois-center {
 	margin-left: auto;
@@ -103,29 +128,41 @@ span.ois-h {
 	margin-right: auto;
 }
 
-.ois-float-right {
+:is(.ois, .ois-text-wrapper).ois-float-right {
 	float: right;
 }
 
-.ois-float-left {
+.ois.ois-float-right,
+.ois.ois-float,
+.ois.ois-float+.ois-label-text,
+.ois.ois-float-right+.ois-label-text {
+	margin-left: 1rem;
+}
+
+.ois.ois-float-left,
+.ois.ois-float-left+.ois-label-text {
+	margin-right: 1rem;
+}
+
+:is(.ois, .ois-text-wrapper).ois-float-left {
 	float: left;
 }
 
-.ois-float {
-	float: left;
+:is(.ois, .ois-text-wrapper).ois-float {
+	float: right;
 }
 
-.ois-center~.ois-label-text {
-	margin-left: auto;
-	margin-right: auto;
-}
-
-.ois-border {
+.ois.ois-border {
 	border-color: var(--ois-border-col, var(--ois-card-col, var(--color-base-100)));
 	border-style: var(--ois-border-arg, solid);
 	border-width: var(--ois-border-num, 1px);
 }
 
+
+/*
+ * It would work without dividing the styles into canvas and normal notes, but I think it could lead to
+ * size issues. Also using banner in canvas wouldn't make it a full sized image, which i don't like.
+ */
 .canvas-node-content span.ois-banner {
 	position: relative;
 	left: -24px;
@@ -138,28 +175,32 @@ span.ois-h {
 }
 
 .workspace-leaf-content .markdown-reading-view .ois-banner-container {
-	height: calc(var(--ois-h-num, 250px) - 25px);
+	height: calc(var(--ois-banner-num, var(--ois-h-num, var(--ois-w-num, 250px))) - 25px);
 }
 
 .workspace-leaf-content .markdown-reading-view .ois-banner-container span.ois-banner {
 	position: absolute;
-	inset: 0 0 auto 0;
-	height: var(--banner-num, 250px);
+	left: 0;
+	top: 0;
+	right: 0;
+	height: var(--ois-banner-num, var(--ois-h-num, var(--ois-w-num, 250px)));
+	width: 100% !important;
 }
 
-span.ois-banner img {
-	height: 100%;
+.ois.ois-banner img {
 	width: 100%;
-	max-width: none;
+	height: 100%;
+	max-width: none !important;
+	object-fit: cover !important;
 }
 
 /* todo */
-.ois-background {
+.ois.ois-background {
 	position: absolute;
 	inset: 0;
 }
 
-.ois-icon {
+.ois.ois-icon {
 	display: inline-block;
 	width: var(--ois-icon-num, 1.5em);
 	height: var(--ois-icon-num, 1.5em);
@@ -167,20 +208,20 @@ span.ois-banner img {
 	max-width: fit-content;
 }
 
-.ois-icon[width]:not([height]) {
+.ois.ois-icon[width]:not([height]) {
 	height: auto;
 }
 
-.ois-icon+.ois-label-text {
+.ois.ois-icon+.ois-label-text {
 	display: inline;
 	font-size: 1em;
 }
 
-.ois-icon+.ois-label-text::before {
+.ois.ois-icon+.ois-label-text::before {
 	content: ' ';
 }
 
-.ois-sticker {
+.ois.ois-sticker {
 	overflow: visible;
 	height: var(--ois-sticker-num, 5em);
 	width: var(--ois-sticker-num, 5em);
@@ -198,7 +239,7 @@ span.ois-banner img {
 		drop-shadow(0px 1.5px var(--ois-sticker-border) rgba(0, 0, 0, 0.25));
 }
 
-.ois-sticker img {
+.ois.ois-sticker img {
 	height: 100%;
 	width: 100%;
 	object-fit: contain;
@@ -206,32 +247,31 @@ span.ois-banner img {
 
 /* Default value is set differently for image shifting styles */
 /* Values here are overridden with the injected properties if specified */
-.ois-up {
+.ois.ois-up {
 	--ois-up-num: 100%;
 }
 
-.ois-down {
+.ois.ois-down {
 	--ois-down-num: 100%;
 }
 
-.ois-left {
+.ois.ois-left {
 	--ois-left-num: 100%;
 }
 
-.ois-right {
+.ois.ois-right {
 	--ois-right-num: 100%;
 }
 
-:is(.ois-up, .ois-down, .ois-left, .ois-right) img {
+.ois:is(.ois-up, .ois-down, .ois-left, .ois-right) img {
 	object-position: calc(50% - var(--ois-left-num, 0%) / 2 + var(--ois-right-num, 0%) / 2) calc(50% - var(--ois-up-num, 0%) / 2 + var(--ois-down-num, 0%) / 2);
-	outline: red 3px solid;
 }
 
-.ois-scale img {
+.ois.ois-scale img {
 	transform: scale(var(--ois-scale-num, 1));
 }
 
-:is(.ois-up, .ois-down, .ois-left, .ois-right).ois-scale img {
+.ois:is(.ois-up, .ois-down, .ois-left, .ois-right).ois-scale img {
 	/* This is the transalte amount needed to shift an image to its border */
 	--ois-scale-shift: calc((1 - 1 / var(--ois-scale-num)) / 2);
 	transform:
@@ -240,4 +280,12 @@ span.ois-banner img {
 		translateY(calc(var(--ois-scale-shift) * var(--ois-up-num, 0%) - var(--ois-scale-shift) * var(--ois-down-num, 0%)))
 		/* Same for left-right */
 		translateX(calc(var(--ois-scale-shift) * var(--ois-left-num, 0%) - var(--ois-scale-shift) * var(--ois-right-num, 0%)));
+}
+
+.ois-text-wrapper.ois-info {
+	float: right;
+}
+
+.ois.ois-info {
+	width: var(--ois-info-num, var(--ois-w, 30%));
 }

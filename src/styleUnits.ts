@@ -16,5 +16,8 @@ export const styleUnits: StyleUnits = {
 	left: `%`,
 	right: `%`,
 	crop: `px`,
-	shadow: `px`
+	shadow: `px`,
+	label: `em`,
+	font: `em`,
+	info: `px`
 }

@@ -1,4 +1,5 @@
-import { ImageStyle, StyleArg, StyleREs } from './types'
+import { StyleREs } from './styleREs'
+import { ImageStyle, StyleArg } from './types'
 
 /** Parses the file extension from the given string */
 export const parseExtension = (fileName: string): string | undefined => fileName.match(/(?<=\.)[\d\w]+$/)?.pop()?.toLowerCase()
@@ -32,17 +33,22 @@ const parseArgs = (varString: string | undefined, styleREs: StyleREs): StyleArg[
 
 		if (!name) {
 			// different default names allow to write multi-arg styles like border-1px-#fff-$dotted$
-			if (value.match(/^[\d.]+$/)) name = `num`
-			if (value.match(/^".*"$/)) name = `str`
-			if (value.match(/^#/)) name = `col`
-			if (value.match(/^&.*&$/)) name = `arg`
+			if (value.match(styleREs.numericValueCheck)) name = `num`
+			if (value.match(styleREs.stringValueCheck)) name = `str`
+			if (value.match(styleREs.colorValueCheck)) name = `col`
+			if (value.match(styleREs.rawValueCheck)) name = `arg`
 		}
 
-		if (value.match(/^&.*&$/)) {
+		if (value.match(styleREs.stringValueCheck)) {
+			value = `"${value.slice(1, value.length - 1)}"`
+		}
+		
+		if (value.match(styleREs.rawValueCheck)) {
 			value = value.slice(1, value.length - 1)
 		}
 
-		if (value.match(/^#\(.*\)$/)) {
+		// if color
+		if (value.match(styleREs.colorValueCheck)) {
 			value = `rgba(${value.slice(2, value.length - 1)})`
 		}
 

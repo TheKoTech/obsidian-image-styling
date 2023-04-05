@@ -7,8 +7,8 @@ export interface OisSettings {
 }
 
 export const DEFAULT_SETTINGS: OisSettings = {
-	prefix: `e`,
-	defaultObjectFit: `contain`
+	prefix: ``,
+	defaultObjectFit: `cover`
 }
 
 // This is for settings if I ever need any
@@ -25,28 +25,29 @@ export class OisSettingTab extends PluginSettingTab {
 
 		containerEl.empty()
 
-		containerEl.createEl(`h1`, { text: `Image Styling` })
-
-		// new Setting(containerEl)
-		// 	.setName(`Prefix`)
-		// 	.setDesc(`With a prefix styles will work only if you add this prefix in the beginning — [.w-400 .h-200]`)
-		// 	.addText(text => text
-		// 		.setPlaceholder(`Examples: . ! @`)
-		// 		.setValue(this.plugin.settings.prefix)
-		// 		.onChange(async (value) => {
-		// 			this.plugin.settings.prefix = value
-		// 			await this.plugin.saveSettings()
-		// 		})
-		// 	)
+		containerEl.createEl(`h2`, { text: `Image Styling` })
 
 		new Setting(containerEl)
-			.setName(`Image positioning behavior`)
-			.setDesc(`Changes how Obsidian renders images`)
+			.setName(`Prefix`)
+			.setDesc(`Requires reload! Specify a prefix for styles: .w-100 or !card`)
+			.addText(text => text
+				.setPlaceholder(`Examples: . ! @ :`)
+				.setValue(this.plugin.settings.prefix)
+				.onChange(async (value) => {
+					this.plugin.settings.prefix = value
+					await this.plugin.saveSettings()
+				})
+			)
+
+		console.log(this.plugin.settings)
+		new Setting(containerEl)
+			.setName(`Image scaling method`)
+			.setDesc(`Requires reload! Changes how Obsidian scales images`)
 			.addDropdown(dropdown => dropdown
-				.setValue(this.plugin.settings.defaultObjectFit)
 				.addOption(`cover`, `Scale up to fill (default)`)
-				.addOption(`fill`, `Stretch to fill`)
+				.addOption(`fill`, `Stretch (obsidian default)`)
 				.addOption(`contain`, `Scale down to contain`)
+				.setValue(this.plugin.settings.defaultObjectFit)
 				.onChange(async (value) => {
 					this.plugin.settings.defaultObjectFit = value
 					await this.plugin.saveSettings()
