@@ -2,7 +2,7 @@
 	"name": "obsidian-image-styling",
 	"version": "1.0.0",
 	"description": "Make your images look fancy!",
-	"main": "main.js",
+	"main": "src/main.js",
 	"scripts": {
 		"dev": "node esbuild.config.mjs",
 		"build": "tsc -noEmit -skipLibCheck && node esbuild.config.mjs production",

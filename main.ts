@@ -1,9 +1,8 @@
 import { MarkdownPostProcessor, Plugin } from "obsidian"
-import { styleUnits } from 'styleUnits'
-import { OisSettingTab, OisSettings, DEFAULT_SETTINGS } from 'Settings'
-import { parseExtension, parseStyles } from 'parsers'
-import { StyleREs } from 'types'
-// import { imageExtension } from 'imageExtension'
+import { styleUnits } from './src/styleUnits'
+import { OisSettingTab, OisSettings, DEFAULT_SETTINGS } from './src/Settings'
+import { parseExtension, parseStyles } from './src/parsers'
+import { StyleREs } from './src/types'
 
 /** Image extensions that Obsidian accepts */
 const imageExtensions = [`png`, `webp`, `jpg`, `jpeg`, `gif`, `bmp`, `svg`]
@@ -14,19 +13,19 @@ const findRootParent = (element: HTMLElement): HTMLElement => {
 }
 
 /** Applies the styles to the span and passes their args as CSS variables */
-const applyStyles = (span: HTMLSpanElement, alt: string) => {
+const applyStyles = (span: HTMLSpanElement, alt: string, styleREs: StyleREs) => {
 
-	const styles = parseStyles(alt)
+	const styles = parseStyles(alt, styleREs)
 	const paragraph = span.parentElement
 
 	// If height or width are specified, convert them into styles
 	const spanWidth = span.attributes.getNamedItem(`width`)?.value
 	if (spanWidth) {
-		styles.push({ name: `w`, vars: [{ name: `num`, value: String(spanWidth) }] })
+		styles.push({ name: `w`, args: [{ name: `num`, value: String(spanWidth) }] })
 	}
 	const spanHeight = span.attributes.getNamedItem(`height`)?.value
 	if (spanHeight) {
-		styles.push({ name: `h`, vars: [{ name: `num`, value: String(spanHeight) }] })
+		styles.push({ name: `h`, args: [{ name: `num`, value: String(spanHeight) }] })
 	}
 
 	span.classList.add(`obsidian-image-styling`)
@@ -42,7 +41,7 @@ const applyStyles = (span: HTMLSpanElement, alt: string) => {
 			labelSpan.classList.add(`ois-label-text`)
 			paragraph?.insertAfter(labelSpan, span)
 
-			const text = style.vars?.find(elem => elem.name === `str`)?.value
+			const text = style.args?.find(elem => elem.name === `str`)?.value
 			labelSpan.innerText = text?.substring(1, text.length - 1) || ``
 		}
 
@@ -57,7 +56,7 @@ const applyStyles = (span: HTMLSpanElement, alt: string) => {
 
 	// Insert CSS variables
 	styles.forEach(style => {
-		style.vars?.forEach(v => {
+		style.args?.forEach(v => {
 			const varName = `--ois-${style.name}` + (v.name ? `-${v.name}` : ``)
 
 			let unit = v.unit
@@ -82,54 +81,60 @@ const applyStyles = (span: HTMLSpanElement, alt: string) => {
 	})
 }
 
-const imageStylingPostProcessor: MarkdownPostProcessor = (element) => {
+/** 
+ * Returns the MarkdownPostProcessor that converts `<img>` and `<span>` elements with ALT into styled images
+ * @param styleREs - the RE object that will be used to parse styles
+ */
+const getPostProcessor = (styleREs: StyleREs): MarkdownPostProcessor => {
 
-	// Internal embeds are first stored in a span with all the HTML attributes.
-	// There is a mandatory core plugin that fetches the internally embedded images and passes the span's attributes to it.
-	const spans = element.querySelectorAll("span.internal-embed[src][alt]") as NodeListOf<HTMLSpanElement>
+	return (element) => {
 
-	if (spans.length > 0) {
-		spans.forEach(span => {
-			const src = span.attributes.getNamedItem(`src`)?.value
-			const alt = span.attributes.getNamedItem(`alt`)?.value
+		// Internal embeds are first stored in a span with all the HTML attributes.
+		// There is a mandatory core plugin that fetches the internally embedded images and passes the span's attributes to it.
+		const spans = element.querySelectorAll(`span.internal-embed[src][alt]`) as NodeListOf<HTMLSpanElement>
 
-			if (!src || !alt) return
+		if (spans.length > 0) {
+			spans.forEach(span => {
+				const src = span.attributes.getNamedItem(`src`)?.value
+				const alt = span.attributes.getNamedItem(`alt`)?.value
 
-			const fileExtension = parseExtension(src)
+				if (!src || !alt) return
 
-			// additional checks to only select images
-			if (!fileExtension) return
-			if (!imageExtensions.contains(fileExtension)) return
-			if (alt === src) return
+				const fileExtension = parseExtension(src)
 
-			applyStyles(span, alt)
-		})
+				// additional checks to only select images
+				if (!fileExtension) return
+				if (!imageExtensions.contains(fileExtension)) return
+				if (alt === src) return
+
+				applyStyles(span, alt, styleREs)
+			})
+		}
+
+		const images = element.querySelectorAll(`img[alt][src]`) as NodeListOf<HTMLImageElement>
+		if (images.length > 0) {
+			images.forEach(image => {
+				if (image.alt === image.src) return false
+
+				// Create a span, put the image in it and pass image's alt and src in it for styling.
+				// This is needed for flexibility in writing CSS.
+				const span = createSpan()
+				image.parentElement?.insertBefore(span, image)
+				span.setAttribute(`alt`, image.alt)
+				span.setAttribute(`src`, image.src)
+				span.appendChild(image)
+
+				// if width and height aren't specified, the img.height and img.width inherit the source's dimensions.
+				// img.attributes are defined only if they're specified in the HTML tag like <img widht="200">.
+				const imageWidth = image.attributes.getNamedItem(`width`)?.value
+				const imageHeight = image.attributes.getNamedItem(`height`)?.value
+				if (imageWidth) { span.setAttribute(`width`, imageWidth) }
+				if (imageHeight) { span.setAttribute(`height`, imageHeight) }
+
+				applyStyles(span, image.alt, styleREs)
+			})
+		}
 	}
-
-	const images = element.querySelectorAll(`img[alt][src]`) as NodeListOf<HTMLImageElement>
-	if (images.length > 0) {
-		images.forEach(image => {
-			if (image.alt === image.src) return false
-
-			// Create a span, put the image in it and pass image's alt and src in it for styling.
-			// This is needed for flexibility in writing CSS.
-			const span = createSpan()
-			image.parentElement?.insertBefore(span, image)
-			span.setAttribute(`alt`, image.alt)
-			span.setAttribute(`src`, image.src)
-			span.appendChild(image)
-
-			// if width and height aren't specified, the img.height and img.width inherit the source's dimensions.
-			// img.attributes are defined only if they're specified in the HTML tag like <img widht="200">.
-			const imageWidth = image.attributes.getNamedItem(`width`)?.value
-			const imageHeight = image.attributes.getNamedItem(`height`)?.value
-			if (imageWidth) { span.setAttribute(`width`, imageWidth) }
-			if (imageHeight) { span.setAttribute(`height`, imageHeight) }
-
-			applyStyles(span, image.alt)
-		})
-	}
-
 }
 
 
@@ -145,7 +150,9 @@ export default class ImageStyling extends Plugin {
 		this.styleREs = new StyleREs()
 		this.addSettingTab(new OisSettingTab(this.app, this))
 
-		this.registerMarkdownPostProcessor(imageStylingPostProcessor)
+		this.registerMarkdownPostProcessor(
+			getPostProcessor(this.styleREs)
+		)
 	}
 
 	async loadSettings() {

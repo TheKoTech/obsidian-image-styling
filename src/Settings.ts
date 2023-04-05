@@ -27,8 +27,6 @@ export class OisSettingTab extends PluginSettingTab {
 
 		containerEl.createEl(`h1`, { text: `Image Styling` })
 
-		console.log(`display`, this.plugin.settings)
-
 		// new Setting(containerEl)
 		// 	.setName(`Prefix`)
 		// 	.setDesc(`With a prefix styles will work only if you add this prefix in the beginning — [.w-400 .h-200]`)
