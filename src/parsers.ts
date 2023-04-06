@@ -47,8 +47,7 @@ const parseArgs = (varString: string | undefined, styleREs: StyleREs): StyleArg[
 			value = value.slice(1, value.length - 1)
 		}
 
-		// if color
-		if (value.match(styleREs.colorValueCheck)) {
+		if (value.match(styleREs.rgbaColorCheck)) {
 			value = `rgba(${value.slice(2, value.length - 1)})`
 		}
 

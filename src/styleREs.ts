@@ -13,6 +13,8 @@ export class StyleREs {
 	stringValueCheck: RegExp
 	/** Matches a string that is a valid colorValue */
 	colorValueCheck: RegExp
+	/** Matches a string that is a valid hex colorValue */
+	rgbaColorCheck: RegExp
 	/** Matches a string that is a valid rawValue */
 	rawValueCheck: RegExp
 
@@ -30,13 +32,17 @@ export class StyleREs {
 		// values
 		const numericValue = `[\\d.]+`
 		const stringValue = `(?:".*?"|'.*?'|\\{.*?\\})`
-		const colorValue = `(?:#\\([\\d\\s.,|]*?\\)|#[a-fA-F\\d]*)`
+		const rgbaColorValue = `#\\([\\d\\s.,|]*?\\)`
+		const hexColorValue = `#[a-fA-F\\d]*`
+		const colorValue = `(?:${rgbaColorValue}|${hexColorValue})`
 		const rawValue = `&.*?&`
 
 		// value checkers
 		const numericValueCheck = `^${numericValue}$`
 		const stringValueCheck = `^${stringValue}$`
 		const colorValueCheck = `^${colorValue}$`
+		// const hexColorCheck = `^${hexColorValue}$`
+		const rgbaColorCheck = `^${rgbaColorValue}$`
 		const rawValueCheck = `^${rawValue}$`
 
 		// argument parts
@@ -55,6 +61,7 @@ export class StyleREs {
 		this.numericValueCheck = new RegExp(numericValueCheck)
 		this.stringValueCheck = new RegExp(stringValueCheck)
 		this.colorValueCheck = new RegExp(colorValueCheck)
+		this.rgbaColorCheck = new RegExp(rgbaColorCheck)
 		this.rawValueCheck = new RegExp(rawValueCheck)
 		this.arg = new RegExp(arg, `g`)
 		this.allArgs = new RegExp(allArgs, `g`)
