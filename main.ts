@@ -21,7 +21,6 @@ export default class ImageStyling extends Plugin {
 
 	async loadSettings() {
 		this.settings = Object.assign({}, DEFAULT_SETTINGS, await this.loadData())
-		console.log(this.settings)
 	}
 
 	async saveSettings() {
@@ -56,23 +55,32 @@ export default class ImageStyling extends Plugin {
 		styles.forEach(style => {
 			span.classList.add(`ois-${style.name}`)
 
-			// Create a separate span for the label and pass it the same CSS classes
+			// todo: docs, extract
 			if (style.name.match(/^(label|text|title)/)) {
 
-				const labelWrapper = createSpan()
-				labelWrapper.classList.add(`ois-text-wrapper`)
-				const labelSpan = createSpan()
-				labelSpan.classList.add(`ois-label-text`)
-				paragraph?.insertAfter(labelWrapper, span)
-				labelWrapper.appendChild(span)
-				labelWrapper.appendChild(labelSpan)
-
 				const text = style.args?.find(elem => elem.name === `str`)?.value
-				labelSpan.innerText = text?.substring(1, text.length - 1) || ``
+
+				if (text) {
+					let textWrapper = this.selectParent(span, `div.ois-text-wrapper`)
+					const textContainer = createSpan()
+					textContainer.classList.add(`ois-${style.name}-container`)
+					textContainer.innerText = text.substring(1, text.length - 1)
+					
+					console.log(1)
+					if (!textWrapper) {
+						textWrapper = createDiv()
+						textWrapper.classList.add(`ois-text-wrapper`)
+						textWrapper.appendChild(span)
+						paragraph?.insertAfter(textWrapper, span)
+					}
+					textWrapper.appendChild(textContainer)
+					console.log(2)
+				}
+
 			}
 
 			// The `banner` style requires the root div to be styled too.
-			// The root div is the rendered markdown line container.
+			// The root div is a line in rendered markdown.
 			// If only I could use the :has() operator...
 			if (style.name === `banner`) {
 				const div = this.findRootParent(span)
@@ -175,5 +183,12 @@ export default class ImageStyling extends Plugin {
 	/** Recursively goes up the parent nodes of an HTML element to the last one */
 	findRootParent = (element: HTMLElement): HTMLElement =>
 		element.parentElement ? this.findRootParent(element.parentElement) : element
+
+	/** Recursively goes up the parent nodesto find the first parent that matches query */
+	selectParent = (element: HTMLElement, query: string): HTMLElement | undefined => {
+		if (!element.parentElement) return
+		if (element.matchParent(query)) return element.parentElement
+		return this.selectParent(element.parentElement, query)
+	}
 
 }

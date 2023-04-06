@@ -66,7 +66,6 @@ export class StyleREs {
 		this.arg = new RegExp(arg, `g`)
 		this.allArgs = new RegExp(allArgs, `g`)
 		this.style = new RegExp(style, `g`)
-		console.log(this.style)
 	}
 }
 

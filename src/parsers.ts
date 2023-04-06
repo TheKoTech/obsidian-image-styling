@@ -20,7 +20,6 @@ const parseArgs = (varString: string | undefined, styleREs: StyleREs): StyleArg[
 	if (!varString) return []
 
 	const matches = [...varString.matchAll(styleREs.arg)]
-	console.log(`parseVariables matches`, ...matches)
 	return matches.map(match => {
 
 		// always present
@@ -51,18 +50,13 @@ const parseArgs = (varString: string | undefined, styleREs: StyleREs): StyleArg[
 			value = `rgba(${value.slice(2, value.length - 1)})`
 		}
 
-		const res = {
+		return {
 			name: name,
 			value: value,
 			// always present
 			// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
 			unit: match.groups!.argUnit
 		} as StyleArg
-
-		console.log(`style: `, res, `match: `, match)
-
-
-		return res as StyleArg
 	})
 }
 

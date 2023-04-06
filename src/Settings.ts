@@ -39,7 +39,6 @@ export class OisSettingTab extends PluginSettingTab {
 				})
 			)
 
-		console.log(this.plugin.settings)
 		new Setting(containerEl)
 			.setName(`Image scaling method`)
 			.setDesc(`Requires reload! Changes how Obsidian scales images`)
