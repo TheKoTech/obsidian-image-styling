@@ -1,7 +1,6 @@
-
-/** 
+/**
  * Contains the regular expressions to parse any part of a style
- * 
+ *
  *     Style syntax: `style-name-${args}`
  *     Arguments syntax: `${argName}${argValue}${argUnit}`, name and unit are optinal
  *     Example: `style-name-num10px-"text"`

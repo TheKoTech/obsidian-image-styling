@@ -2,7 +2,7 @@ import ImageStyling from 'main'
 import { App, PluginSettingTab, Setting } from 'obsidian'
 
 export interface OisSettings {
-	prefix: string,
+	prefix: string
 	defaultObjectFit: string
 }
 
@@ -30,27 +30,29 @@ export class OisSettingTab extends PluginSettingTab {
 		new Setting(containerEl)
 			.setName(`Prefix`)
 			.setDesc(`Requires reload! Specify a prefix for styles: .w-100 or !card`)
-			.addText(text => text
-				.setPlaceholder(`Examples: . ! @ :`)
-				.setValue(this.plugin.settings.prefix)
-				.onChange(async (value) => {
-					this.plugin.settings.prefix = value
-					await this.plugin.saveSettings()
-				})
+			.addText(text =>
+				text
+					.setPlaceholder(`Examples: . ! @ :`)
+					.setValue(this.plugin.settings.prefix)
+					.onChange(async value => {
+						this.plugin.settings.prefix = value
+						await this.plugin.saveSettings()
+					})
 			)
 
 		new Setting(containerEl)
 			.setName(`Image scaling method`)
 			.setDesc(`Requires reload! Changes how Obsidian scales images`)
-			.addDropdown(dropdown => dropdown
-				.addOption(`cover`, `Scale up to fill (default)`)
-				.addOption(`fill`, `Stretch (obsidian default)`)
-				.addOption(`contain`, `Scale down to contain`)
-				.setValue(this.plugin.settings.defaultObjectFit)
-				.onChange(async (value) => {
-					this.plugin.settings.defaultObjectFit = value
-					await this.plugin.saveSettings()
-				})
+			.addDropdown(dropdown =>
+				dropdown
+					.addOption(`cover`, `Scale up to fill (default)`)
+					.addOption(`fill`, `Stretch (obsidian default)`)
+					.addOption(`contain`, `Scale down to contain`)
+					.setValue(this.plugin.settings.defaultObjectFit)
+					.onChange(async value => {
+						this.plugin.settings.defaultObjectFit = value
+						await this.plugin.saveSettings()
+					})
 			)
 	}
 }
