@@ -1,4 +1,4 @@
-import ImageStyling from 'main'
+import ImageStyling from './main'
 import { App, PluginSettingTab, Setting } from 'obsidian'
 
 export interface OisSettings {

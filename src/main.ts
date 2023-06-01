@@ -1,8 +1,8 @@
 import { MarkdownPostProcessor, Plugin } from 'obsidian'
-import { styleUnits } from './src/styleUnits'
-import { OisSettingTab, OisSettings, DEFAULT_SETTINGS } from './src/Settings'
-import { parseExtension, parseStyles } from './src/parsers'
-import { StyleREs } from './src/styleREs'
+import { styleUnits } from './styleUnits'
+import { OisSettingTab, OisSettings, DEFAULT_SETTINGS } from './Settings'
+import { parseExtension, parseStyles } from './parsers'
+import { StyleREs } from './styleREs'
 
 export default class ImageStyling extends Plugin {
 	settings: OisSettings
